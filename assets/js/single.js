@@ -27,6 +27,12 @@ getRepoIssues("facebook/react");
 
 //data is being passed as an argument into this function
 function displayIssues(issues){
+
+    //if there are no issues
+    if (issues.length === 0){
+        issueContainerEl.textContent = "This repo has no open issues!";
+        return;
+    }
     
     //loop over response data and create an <a> elemetn for each issue
     for (var i = 0; i < issues.length; i++){
