@@ -1,6 +1,28 @@
 
 var issueContainerEl = document.querySelector("#issues-container");
 var limitWarningEl = document.querySelector("#limit-warning");
+var repoNameEl = document.querySelector("#repo-name");
+
+function getRepoName(){
+    //store the query string in the URL into a variable
+    //for example "?repo=A/.dotfiles"
+    //repo was taken from previous page
+    var queryString = document.location.search;
+    var repoName = queryString.split("=")[1];
+    //check if we got the right thing
+    console.log(repoName);
+    if(repoName){
+        //pass repoName into the function handling getting the issues
+        getRepoIssues(repoName);
+        //print the repo name onto the document page
+        repoNameEl.textContent = repoName;
+    } else {
+        //if no repo was given redirect to homepage
+        document.location.replace("./index.html")
+    }
+}
+getRepoName();
+
 
 function displayWarning(repo){
     //add text to warning container
@@ -12,7 +34,6 @@ function displayWarning(repo){
     //append warning to container
     limitWarningEl.appendChild(linkEl);
 }
-displayWarning("facebook/react");
 
 function getRepoIssues(repo){
     
@@ -28,19 +49,21 @@ function getRepoIssues(repo){
                 console.log(data);
                 //pass reponse data to dom function
                 displayIssues(data);
-
+                
                 //check if api has paginated issues, 30 or more
                 if (response.headers.get("Link")){
                     console.log("repo has more than 30 issues");
+                    displayWarning(repow);
                 }
             });
         } else {
             alert("There was a problem with your request!");
+            //redirect to home page after the alert
+            document.location.replace("./index.html");
         }
     });
 }
 
-getRepoIssues("facebook/react");
 
 //data is being passed as an argument into this function
 function displayIssues(issues){
