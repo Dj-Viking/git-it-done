@@ -1,8 +1,45 @@
 
-var userFormEl = document.querySelector("#user-form");
-var nameInputEl = document.querySelector("#username");
-var repoContainerEl = document.querySelector("#repos-container");
-var repoSearchTerm = document.querySelector("#repo-search-term");
+const userFormEl = document.querySelector("#user-form");
+const nameInputEl = document.querySelector("#username");
+const repoContainerEl = document.querySelector("#repos-container");
+const repoSearchTerm = document.querySelector("#repo-search-term");
+const languageButtonsEl = document.querySelector("#language-buttons");
+
+buttonClickHandler = event => {
+    let language = event.target.getAttribute("data-language");
+    //checking if the event is getting the data attribute
+    console.log("checking if the event is getting the data attribute");
+    console.log(language);
+    if(language) {
+        getFeaturedRepos(language);
+        //if language was a truthy value pass into getFeaturedRepos()
+        //and clear the old content
+        //getFeaturedRepos has the fetch() so it takes longer than clearing the
+        //old repo content
+        repoSearchTerm.textContent = language;
+        repoContainerEl.textContent = "";
+        
+    }
+
+}
+
+getFeaturedRepos = language => {
+    const apiUrl = "https://api.github.com/search/repositories?q=" + language + "+is:feature&sort=help-wanted-issues";
+    fetch(apiUrl).then(response => {
+        if (response.ok){
+            response.json().then(data => {
+                console.log(data);
+                console.log(language);
+                displayFeaturedRepos(data, language);
+            });
+            console.log(response);
+        } else {
+            alert("Error: " + response.statusText);
+        }
+    });
+};
+
+
 
 //passing an argument in as whatever is entered as the GitHub username
 function getUserRepos(user){
@@ -61,11 +98,50 @@ function formSubmitHandler(event){
     }
 }
 
+function displayFeaturedRepos(data, language){
+    //clear old content
+    repoContainerEl.textContent = "";
+    //place language into the showing featured repos for language
+    repoSearchTerm.textContent = language;
+    
+    //check if api returned any repos
+    if (data.items.length === 0){
+        repoContainerEl.textContent = "No repositories found.";
+        return;
+    }
+    //loop over the featured repos
+    for (let i = 0; i < data.items.length; i++){
+        let repoName = data.items[i].owner.login + "/" + data.items[i].name;
+        let repoEl = document.createElement("a");
+        repoEl.classList = "list-item flex-row justify-space-between align-center";
+        repoEl.setAttribute("href", "./single-repo.html?repo=" + repoName);
+        let titleEl = document.createElement("span");
+        titleEl.textContent = repoName;
+        //create a status element
+        var statusEl = document.createElement("span");
+        statusEl.classList = "flex-row align-center";
+        //check if current repo has issues or not
+        if (data.items[i].open_issues_count > 0){
+            statusEl.innerHTML = 
+            "<i class='fas fa-times status-icon icon-danger'></i>" + data.items[i].open_issues_count + " issue(s)";
+        } else {
+            statusEl.innerHTML = 
+            "<i class='fas fa-check-square status-icon icon-success'></i>";
+        }
+        //append to container
+        repoEl.appendChild(statusEl);
+        //append to container
+        repoEl.appendChild(titleEl);
+        //append container to the document object model
+        repoContainerEl.appendChild(repoEl);
+    }
+}
 //displayRepos(data, user) are the arguments being passed into the parameters here
 function displayRepos(repos, searchTerm){
     //clear old content
     repoContainerEl.textContent = "";
     console.log(repos)
+    //put username next to showing repositories for: 
     repoSearchTerm.textContent = searchTerm;
     console.log(searchTerm);
 
@@ -74,8 +150,6 @@ function displayRepos(repos, searchTerm){
         repoContainerEl.textContent = "No repositories found.";
         return;//exit this function since no repos were found to display
     }
-
-
     //loop over the user's repos
     for (var i = 0; i < repos.length; i++){
         //format repo name
@@ -116,4 +190,5 @@ function displayRepos(repos, searchTerm){
 }
 
 userFormEl.addEventListener("submit", formSubmitHandler);
+languageButtonsEl.addEventListener("click", buttonClickHandler);
 
