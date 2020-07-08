@@ -31,6 +31,7 @@ function displayWarning(repo){
     linkEl.textContent = "See more issues on GitHub.com";
     linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
     linkEl.setAttribute("target", "_blank");
+    linkEl.classList = "issues-more-link";
     //append warning to container
     limitWarningEl.appendChild(linkEl);
 }

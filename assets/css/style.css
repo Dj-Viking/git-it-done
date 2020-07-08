@@ -11,6 +11,13 @@
   box-sizing: border-box;
 }
 
+.body-dark {
+  background-color: var(--dark);
+}
+
+.issues-more-link{
+  color: yellow;
+}
 body {
   background-color: var(--primary);
   margin: 0;
@@ -500,5 +507,3 @@ p {
     flex: 0 0 100%;
   }
 }
-
-
