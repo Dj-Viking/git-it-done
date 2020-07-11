@@ -68,7 +68,7 @@ function getUserRepos(user){
         }//closing off the if and else statements
     })//closing off the fetch(apiUrl).then(function(response){} method here
     .catch(function(error){
-        alert("Unable to connect to GitHub.")
+        alert("Unable to connect to GitHub." + error);
     });//closing .catch(function(error){}) which is tacked onto the end of fetch() method
 }//closing off the function
 
