@@ -49,7 +49,8 @@ function getUserRepos(user){
     //blocked by the fetch
     var apiUrl = "https://api.github.com/users/" + user + "/repos";
 
-    fetch(apiUrl).then(function(response){
+    fetch(apiUrl)
+    .then(function(response){
         console.log("inside the function, on the first promise", response);
         //converting the response into JSON instead of the response object
         //if not JSON data then use response.text().then(function(data){})
@@ -57,7 +58,8 @@ function getUserRepos(user){
             //returns another promise
             console.log("here is the all data we want on the user, on the second promise");
             //console.log(data);
-            response.json().then(function(data){
+            response.json()
+            .then(function(data){
                 //data eventually becomes repos in other functions
                 displayRepos(data, user);
             });//closing the response.json().then() method
